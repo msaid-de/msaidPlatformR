@@ -1,0 +1,85 @@
+#' msaidPlatformR: R SDK for MSAID Platform Mass Spectrometry Analysis
+#'
+#' @description
+#' The msaidPlatformR package provides R users with programmatic access to the
+#' MSAID Platform for mass spectrometry data analysis. It handles authentication,
+#' experiment data retrieval, local caching, and data processing workflows for
+#' proteomics analysis.
+#'
+#' @section Main Functions:
+#'
+#' \subsection{Authentication:}{
+#' \itemize{
+#'   \item \code{\link{platform_login}} - Login to the MSAID Platform
+#'   \item \code{\link{platform_logout}} - Logout and clear tokens
+#' }}
+#'
+#' \subsection{Experiment Management:}{
+#' \itemize{
+#'   \item \code{\link{platform_list_experiments}} - List available experiments
+#'   \item \code{\link{platform_read_experiment_results}} - Download and read experiment data
+#'   \item \code{\link{platform_clear_experiment_cache}} - Clear local data cache
+#' }}
+#'
+#' \subsection{Utility Functions:}{
+#' \itemize{
+#'   \item \code{\link{platform_set_debug}} - Enable/disable debug logging
+#' }}
+#'
+#' @section Quick Start:
+#'
+#' \preformatted{
+#' # 1. Login to the platform
+#' platform_login()
+#'
+#' # 2. List available experiments
+#' experiments <- platform_list_experiments(name_includes = "experiment1")
+#'
+#' # 3. Read experiment data at protein group level
+#' data <- platform_read_experiment_results(
+#'   level = "protein_groups",
+#'   experiment_names = c("experiment1"),
+#'   max_global_q_value = 0.01,
+#'   include_decoys = FALSE
+#' )
+#' }
+#'
+#' @section Data Levels:
+#' The platform provides proteomics data at multiple aggregation levels:
+#' \itemize{
+#'   \item \strong{psms} - Peptide-spectrum matches (lowest level)
+#'   \item \strong{precursors} - Precursor ion data
+#'   \item \strong{peptides} - Peptide-level aggregation
+#'   \item \strong{modified_peptides} - Modified peptide sequences
+#'   \item \strong{protein_groups} - Protein-level aggregation (highest level)
+#' }
+#'
+#' @section Authentication:
+#' Authentication uses OAuth/OIDC flow. The SDK will open a
+#' browser window for login if possible.
+#'
+#' @section Data Filtering:
+#' Common filtering options include:
+#' \itemize{
+#'   \item \code{max_q_value} - Filter by local q-value threshold
+#'   \item \code{max_global_q_value} - Filter by global q-value threshold
+#'   \item \code{include_decoys} - Include/exclude decoy hits
+#'   \item \code{include_columns}/\code{exclude_columns} - Column selection
+#' }
+#'
+#' @section Troubleshooting:
+#' \itemize{
+#'   \item Enable debug mode: \code{platform_set_debug(TRUE)}
+#'   \item Clear problematic cache: \code{platform_clear_experiment_cache()}
+#'   \item Ensure port 8000 is available for authentication
+#' }
+#'
+#' @author MSAID GmbH (\url{https://www.msaid.de/})
+#' @references
+#' \itemize{
+#'   \item MSAID: \url{https://www.msaid.de/}
+#'   \item MSAID Platform: \url{https://www.platform.msaid.io/}
+#'   \item Support: \email{support@msaid.de}
+#' }
+#'
+"_PACKAGE"

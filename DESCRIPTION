@@ -1,0 +1,30 @@
+Package: msaidPlatformR
+Type: Package
+Title: R SDK for MSAID Platform Mass Spectrometry Analysis
+Version: 1.10.0.0
+Author: MSAID GmbH (https://www.msaid.de/)
+Maintainer: MSAID Team <support@msaid.de>
+Description: Provides R users with programmatic access to the MSAID Platform for
+    mass spectrometry data analysis. Handles authentication,
+    experiment data retrieval, local caching, and data processing workflows for
+    proteomics analysis.
+License: Apache License (>= 2)
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    devtools,
+    renv,
+    testthat (>= 3.0.0),
+    usethis,
+    mockery,
+    withr
+Config/testthat/edition: 3
+RoxygenNote: 7.3.2
+Imports: 
+    arrow,
+    data.table,
+    dplyr,
+    httpuv,
+    httr,
+    jsonlite,
+    magrittr
