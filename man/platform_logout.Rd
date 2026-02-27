@@ -4,14 +4,20 @@
 \alias{platform_logout}
 \title{Logout from MSAID Platform}
 \usage{
-platform_logout()
+platform_logout(stage = NULL)
+}
+\arguments{
+\item{stage}{Character string or NULL. If provided, only clears the session for the
+specified stage (e.g., "dev", "prod"). If the cleared stage was the active stage,
+the active stage is set to NULL.
+If NULL (default), clears all sessions and resets to initial state.}
 }
 \value{
-NULL (invisible). The function does not return a value but prints 
+NULL (invisible). The function does not return a value but prints
   "Logout was successful" to confirm the logout operation.
 }
 \description{
-Clears all stored authentication tokens and resets the internal environment state,
+Clears stored authentication tokens and resets the internal environment state,
 effectively logging the user out from the MSAID Platform. After calling this function,
 you will need to call \code{\link{platform_login}} again to authenticate before
 accessing any platform resources.
@@ -40,6 +46,9 @@ experiments <- platform_list_experiments()
 
 # Logout when finished
 platform_logout()
+
+# Logout from a specific stage only
+platform_logout(stage = "dev")
 }
 
 }

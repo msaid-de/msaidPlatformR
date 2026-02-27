@@ -1,11 +1,16 @@
 #' Logout from MSAID Platform
 #'
-#' Clears all stored authentication tokens and resets the internal environment state,
+#' Clears stored authentication tokens and resets the internal environment state,
 #' effectively logging the user out from the MSAID Platform. After calling this function,
 #' you will need to call \code{\link{platform_login}} again to authenticate before
 #' accessing any platform resources.
 #'
-#' @return NULL (invisible). The function does not return a value but prints 
+#' @param stage Character string or NULL. If provided, only clears the session for the
+#'   specified stage (e.g., "dev", "prod"). If the cleared stage was the active stage,
+#'   the active stage is set to NULL.
+#'   If NULL (default), clears all sessions and resets to initial state.
+#'
+#' @return NULL (invisible). The function does not return a value but prints
 #'   "Logout was successful" to confirm the logout operation.
 #'
 #' @details
@@ -31,13 +36,27 @@
 #'
 #' # Logout when finished
 #' platform_logout()
+#'
+#' # Logout from a specific stage only
+#' platform_logout(stage = "dev")
 #' }
 #'
 #' @seealso \code{\link{platform_login}} for logging in,
 #'   \code{\link{platform_clear_experiment_cache}} for clearing cached data
 #'
 #' @export
-platform_logout <- function() {
-  init_internal_env()
+platform_logout <- function(stage = NULL) {
+  if (is.null(stage)) {
+    # Full reset: clear all sessions
+    init_internal_env()
+  } else {
+    # Remove only the specified stage session
+    .internal_env$sessions[[stage]] <- NULL
+
+    # If the removed stage was the active stage, clear it
+    if (identical(.internal_env$active_stage, stage)) {
+      .internal_env$active_stage <- NULL
+    }
+  }
   message("Logout was successful")
 }

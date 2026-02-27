@@ -9,7 +9,13 @@
 #'  set_env_var("","","")
 #'  }
 set_env_var <- function(env_name,env_value){
-  unlockBinding(env_name,.internal_env)
-  assign(env_name, env_value, envir = .internal_env)
-  lockBinding(env_name,.internal_env)
+  if (env_name %in% SESSION_VARS) {
+    active <- .internal_env$active_stage
+    if (is.null(active)) {
+      stop("Cannot set session variable '", env_name, "': no active stage. Call platform_login() first.")
+    }
+    .internal_env$sessions[[active]][[env_name]] <- env_value
+    return(invisible())
+  }
+  .internal_env[[env_name]] <- env_value
 }

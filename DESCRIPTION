@@ -1,7 +1,7 @@
 Package: msaidPlatformR
 Type: Package
 Title: R SDK for MSAID Platform Mass Spectrometry Analysis
-Version: 1.12.2
+Version: 1.13.3
 Author: MSAID GmbH (https://www.msaid.de/)
 Maintainer: MSAID Team <support@msaid.de>
 Description: Provides R users with programmatic access to the MSAID Platform for
@@ -19,7 +19,7 @@ Suggests:
     mockery,
     withr
 Config/testthat/edition: 3
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports: 
     arrow,
     data.table,

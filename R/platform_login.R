@@ -67,11 +67,20 @@ platform_login <- function(region='eu-central-1', stage='prod', endpoint=NULL, o
 
   remote_server_note <- "Note: If you are connecting to a RStudio session on a remote server, use open_browser = FALSE and ssh forwarding (see ?platform_login)."
 
+  # Ensure a session entry exists for this stage
+  if (is.null(.internal_env$sessions[[stage]])) {
+    .internal_env$sessions[[stage]] <- list()
+  }
+
+  # Set this stage as the active stage
+  .internal_env$active_stage <- stage
+
   auth_code_holder <- new.env()
   auth_code_holder$code <- NULL
   auth_code_holder$refresh_token <- NULL
 
-  auth_code_holder$refresh_token <- get_env_var("refresh_token")
+  # Look up the stage-specific refresh token
+  auth_code_holder$refresh_token <- .internal_env$sessions[[stage]]$refresh_token
 
   cognito_token_url <- ""
   endpoint_suffix <- ""
@@ -83,8 +92,8 @@ platform_login <- function(region='eu-central-1', stage='prod', endpoint=NULL, o
     endpoint_prefix <- region
   } else if ((stage == "dev") || (stage == "testing")) {
     cognito_token_url <- sprintf("https://alexandria-%s-idp.auth.%s.amazoncognito.com",stage,region)
-    endpoint_suffix <- "alexandria.cluster.internal"
-    endpoint_prefix <- stage
+    endpoint_suffix <- sprintf("%s.platform.internal",stage)
+    endpoint_prefix <- region
   } else {
     stop("Platform login failed: Stage parameter is incorrect")
   }
