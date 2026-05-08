@@ -341,6 +341,11 @@ platform_read_experiment_results <- function(level = c("psms", "precursors", "pe
                                          exclude_array_columns=exclude_array_columns)
   ds <- entire_cache %>% dplyr::filter(experiment_uuid %in% experiment_uuids)
 
+  # Remove experiment_uuid from output if user didn't explicitly request it
+  if (!is.null(include_columns) && !"experiment_uuid" %in% include_columns) {
+    ds <- ds %>% dplyr::select(-dplyr::any_of("experiment_uuid"))
+  }
+
   # Convert to requested output format
   if (out_format == "data_table") {
     print("Converting to data.table")

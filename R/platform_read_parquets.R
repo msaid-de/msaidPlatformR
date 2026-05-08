@@ -26,11 +26,12 @@ platform_read_parquets <- function (dir,level,max_q_value=1,max_global_q_value=1
     return(ds)
   }
 
-  if(is.null(include_columns)) {
-    include_columns <- unlist(sapply(ds$schema$fields, function(field) {
-      field$name
-    }))
-  }
+  all_columns <- unlist(sapply(ds$schema$fields, function(field) {
+    field$name
+  }))
+
+  # Determine user-requested columns (NULL means all)
+  user_include <- if(is.null(include_columns)) all_columns else include_columns
 
   if(exclude_array_columns) {
     array_columns <- sapply(ds$schema$fields, function(field) {
@@ -47,9 +48,6 @@ platform_read_parquets <- function (dir,level,max_q_value=1,max_global_q_value=1
     ds <- ds %>% dplyr::filter(DECOY == F)
   }
 
-  exclude_columns <- c(exclude_columns, array_columns)
-  exclude_columns <- exclude_columns[!exclude_columns%in%include_columns]
-
   if(level %in% c("psms", "precursors", "peptides", "modified_peptides")) {
     ds <- ds %>%
       dplyr::filter(Q_VALUE <= max_q_value)
@@ -60,13 +58,26 @@ platform_read_parquets <- function (dir,level,max_q_value=1,max_global_q_value=1
       dplyr::filter(GLOBAL_Q_VALUE <= max_global_q_value)
   }
 
+  # Build final column set:
+  # - Start with user-requested columns
+  # - include_columns takes priority over exclude_columns
+  # - Always include experiment_uuid (needed by caller for filtering)
+  # - Always exclude organization_uuid and account_uuid (internal partition columns)
+  columns_to_exclude <- c(exclude_columns, array_columns)
+  if (!is.null(include_columns)) {
+    # User-provided include_columns take priority over exclude_columns
+    columns_to_exclude <- columns_to_exclude[!columns_to_exclude %in% include_columns]
+  }
+  final_columns <- user_include[!user_include %in% columns_to_exclude]
+  if ("experiment_uuid" %in% all_columns) {
+    final_columns <- union(final_columns, "experiment_uuid")
+  }
+  final_columns <- setdiff(final_columns, c("organization_uuid", "account_uuid"))
+
   ds <- ds %>%
-    dplyr::select(-dplyr::all_of(exclude_columns)) %>%
-    dplyr::select(dplyr::any_of(include_columns)) %>%
-    dplyr::select(-dplyr::any_of(c("organization_uuid", "account_uuid"))) %>%
+    dplyr::select(dplyr::any_of(final_columns)) %>%
     dplyr::mutate(local_file_path = arrow::add_filename()) %>%
     dplyr::compute()
-
 
   return(ds)
 }
