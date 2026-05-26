@@ -90,6 +90,10 @@ platform_login <- function(region='eu-central-1', stage='prod', endpoint=NULL, o
     cognito_token_url <- sprintf("https://platform-prod-idp.auth.%s.amazoncognito.com",region)
     endpoint_suffix <- "platform"
     endpoint_prefix <- region
+  } else if (stage == "prod-internal") {
+    cognito_token_url <- sprintf("https://platform-prod-internal-idp.auth.%s.amazoncognito.com",region)
+    endpoint_suffix <- "platform.internal"
+    endpoint_prefix <- region
   } else if ((stage == "dev") || (stage == "testing")) {
     cognito_token_url <- sprintf("https://alexandria-%s-idp.auth.%s.amazoncognito.com",stage,region)
     endpoint_suffix <- sprintf("%s.platform.internal",stage)
